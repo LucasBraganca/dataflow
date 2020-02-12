@@ -1,0 +1,32 @@
+digraph fir{
+ 0 [ label = in0 ]
+ 1 [ label = out1 ]
+ 2 [ label = multi, VALUE = 4]
+ "2.4"[ label = 4 ]
+ 3 [ label = reg]
+ 4 [ label = multi, VALUE = 3]
+ "4.3"[ label = 3 ]
+ 5 [ label = add]
+ 6 [ label = multi, VALUE = 2]
+ "6.2"[ label = 2 ]
+ 7 [ label = add]
+ 8 [ label = multi, VALUE = 1]
+ "8.1"[ label = 1 ]
+ 9 [ label = add]
+ 0 -> 2
+ 0 -> 4
+ 0 -> 6
+ 0 -> 8
+ "2.4" -> 2
+ 2 -> 3
+ 3 -> 5
+ "4.3" -> 4
+ 4 -> 5
+ 5 -> 7
+ "6.2" -> 6
+ 6 -> 7
+ 7 -> 9
+ "8.1" -> 8
+ 8 -> 9
+ 9 -> 1
+}
