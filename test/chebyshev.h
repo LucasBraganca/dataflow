@@ -84,6 +84,7 @@ void run_chebyshev() {
         }
         cout << endl;
     }
+    cout << endl;
     delete dataFlow;
 }
 

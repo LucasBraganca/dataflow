@@ -1,0 +1,6 @@
+**/build
+**/mybuild
+**/.idea
+**/cmake-build-debug
+**/cmake-build-default
+**/*.vscode

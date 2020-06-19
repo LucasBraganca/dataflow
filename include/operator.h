@@ -194,7 +194,7 @@ public:
 template<class T>
 class Addi : public Operator<T> {
 public:
-    Addi(int id, int constant) : Operator<T>(id, OP_ADD, OP_IMMEDIATE, "addi", constant) {}
+    Addi(int id, T constant) : Operator<T>(id, OP_ADD, OP_IMMEDIATE, "addi", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -220,7 +220,7 @@ public:
 template<class T>
 class Andi : public Operator<T> {
 public:
-    Andi(int id, int constant) : Operator<T>(id, OP_AND, OP_IMMEDIATE, "andi", constant) {}
+    Andi(int id, T constant) : Operator<T>(id, OP_AND, OP_IMMEDIATE, "andi", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -246,7 +246,7 @@ public:
 template<class T>
 class Beqi : public Operator<T> {
 public:
-    Beqi(int id, int constant) : Operator<T>(id, OP_BEQ, OP_IMMEDIATE, "beqi", constant) {}
+    Beqi(int id, T constant) : Operator<T>(id, OP_BEQ, OP_IMMEDIATE, "beqi", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -272,7 +272,7 @@ public:
 template<class T>
 class Bnei : public Operator<T> {
 public:
-    Bnei(int id, int constant) : Operator<T>(id, OP_BNE, OP_IMMEDIATE, "bnei", constant) {}
+    Bnei(int id, T constant) : Operator<T>(id, OP_BNE, OP_IMMEDIATE, "bnei", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -323,7 +323,7 @@ public:
 template<class T>
 class Maxi : public Operator<T> {
 public:
-    Maxi(int id, int constant) : Operator<T>(id, OP_MAX, OP_IMMEDIATE, "maxi", constant) {}
+    Maxi(int id, T constant) : Operator<T>(id, OP_MAX, OP_IMMEDIATE, "maxi", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -359,7 +359,7 @@ public:
 template<class T>
 class Mini : public Operator<T> {
 public:
-    Mini(int id, int constant) : Operator<T>(id, OP_MIN, OP_IMMEDIATE, "mini", constant) {}
+    Mini(int id, T constant) : Operator<T>(id, OP_MIN, OP_IMMEDIATE, "mini", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -390,7 +390,7 @@ public:
 template<class T>
 class Multi : public Operator<T> {
 public:
-    Multi(int id, int constant) : Operator<T>(id, OP_MULT, OP_IMMEDIATE, "multi", constant) {}
+    Multi(int id, T constant) : Operator<T>(id, OP_MULT, OP_IMMEDIATE, "multi", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -417,7 +417,7 @@ public:
 template<class T>
 class Muxi : public Operator<T> {
 public:
-    Muxi(int id, int constant) : Operator<T>(id, OP_MUX, OP_IMMEDIATE, "muxi", constant) {}
+    Muxi(int id, T constant) : Operator<T>(id, OP_MUX, OP_IMMEDIATE, "muxi", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA() && Operator<T>::getBranchIn()) {
@@ -515,7 +515,7 @@ public:
 template<class T>
 class PassBi : public Operator<T> {
 public:
-    explicit PassBi(int id, int constant) : Operator<T>(id, OP_PASS_B, OP_IMMEDIATE, "reg", constant) {}
+    explicit PassBi(int id, T constant) : Operator<T>(id, OP_PASS_B, OP_IMMEDIATE, "reg", constant) {}
 
     void compute() override {
         auto v = Operator<T>::getConst();
@@ -539,7 +539,7 @@ public:
 template<class T>
 class Sgti : public Operator<T> {
 public:
-    explicit Sgti(int id, int constant) : Operator<T>(id, OP_SGT, OP_IMMEDIATE, "sgti", constant) {}
+    explicit Sgti(int id, T constant) : Operator<T>(id, OP_SGT, OP_IMMEDIATE, "sgti", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -565,7 +565,7 @@ public:
 template<class T>
 class Shli : public Operator<T> {
 public:
-    explicit Shli(int id, int constant) : Operator<T>(id, OP_SHL, OP_IMMEDIATE, "shli", constant) {}
+    explicit Shli(int id, T constant) : Operator<T>(id, OP_SHL, OP_IMMEDIATE, "shli", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -591,7 +591,7 @@ public:
 template<class T>
 class Shri : public Operator<T> {
 public:
-    explicit Shri(int id, int constant) : Operator<T>(id, OP_SHR, OP_IMMEDIATE, "shri", constant) {}
+    explicit Shri(int id, T constant) : Operator<T>(id, OP_SHR, OP_IMMEDIATE, "shri", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -617,7 +617,7 @@ public:
 template<class T>
 class Slti : public Operator<T> {
 public:
-    explicit Slti(int id, int constant) : Operator<T>(id, OP_SLT, OP_IMMEDIATE, "slti", constant) {}
+    explicit Slti(int id, T constant) : Operator<T>(id, OP_SLT, OP_IMMEDIATE, "slti", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {
@@ -669,7 +669,7 @@ public:
 template<class T>
 class Xori : public Operator<T> {
 public:
-    Xori(int id, int constant) : Operator<T>(id, OP_XOR, OP_IMMEDIATE, "xori", constant) {}
+    Xori(int id, T constant) : Operator<T>(id, OP_XOR, OP_IMMEDIATE, "xori", constant) {}
 
     void compute() override {
         if (Operator<T>::getSrcA()) {

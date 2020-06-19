@@ -72,6 +72,7 @@ void run_fir() {
         }
         cout << endl;
     }
+    cout << endl;
     delete dataFlow;
 }
 

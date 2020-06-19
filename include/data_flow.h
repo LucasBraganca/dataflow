@@ -23,18 +23,47 @@ private:
     int max_level;
 
     void addOperator(Operator<T> *op) {
-        if (op->getDataFlowId() == -1) {
-            op->setDataFlowId(DataFlow<T>::id);
-            DataFlow<T>::op_array[op->getId()] = op;
-            DataFlow<T>::num_op++;
-            if (op->getType() == OP_IN) {
-                DataFlow<T>::num_op_in++;
-            }
-            if (op->getType() == OP_OUT) {
-                DataFlow<T>::num_op_out++;
+        if(DataFlow<T>::op_array.find(op->getId()) == DataFlow<T>::op_array.end()) {
+            if (op->getDataFlowId() == -1) {
+                op->setDataFlowId(DataFlow<T>::id);
+                DataFlow<T>::op_array[op->getId()] = op;
+                DataFlow<T>::num_op++;
+                if (op->getType() == OP_IN) {
+                    DataFlow<T>::num_op_in++;
+                }
+                if (op->getType() == OP_OUT) {
+                    DataFlow<T>::num_op_out++;
+                }
             }
         }
     }
+    /*
+    void load(const vector<tuple<string, int, int, int>>& d) {
+        for(auto c : d){
+            string op = std::get<0>(c);
+            int node_id = std::get<1>(c);
+            int src_0_id = std::get<2>(c);
+            int src_1_id = std::get<3>(c);
+            T constant = std::get<3>(c);
+
+            if(op == "add"){
+                auto node = new Add<T>(node_id);
+            }else if(op == "sub"){
+                auto node = new Sub<T>(node_id);
+            }else if(op == "mult"){
+                auto node = new Mult<T>(node_id);
+            }else if(op == "addi"){
+                auto node = new Addi<T>(node_id,constant);
+            }else if(op == "subi"){
+                auto node = new Subi<T>(node_id,constant);
+            }else if(op == "multi"){
+                auto node = new Multi<T>(node_id,constant);
+            }
+
+            cout << std::get<0>(c) << " " << endl;
+        }
+    }
+     */
 
 public:
 
@@ -56,7 +85,7 @@ public:
         return r;
     }
 
-    void compute(){
+    void compute() {
         auto n = DataFlow<T>::getMaxLevel();
         unsigned long allIsEnd = 0;
         while (allIsEnd != DataFlow<T>::getNumOpIn()) {
@@ -67,7 +96,7 @@ public:
                     if (op->getLevel() == i) {
                         op->compute();
                         if (op->getType() == OP_IN && op->isEnd()) {
-                                allIsEnd++;
+                            allIsEnd++;
                         }
                     }
                 }
@@ -82,14 +111,14 @@ public:
         return op_array;
     }
 
-    Operator<T> *getOp(int id) {
-        if (DataFlow<T>::op_array.find(id) != DataFlow<T>::op_array.end()) {
-            return DataFlow<T>::op_array[id];
+    Operator<T> *getOp(int op_id) {
+        if (DataFlow<T>::op_array.find(op_id) != DataFlow<T>::op_array.end()) {
+            return DataFlow<T>::op_array[op_id];
         }
         return nullptr;
     }
 
-    void toDOT(std::string fileNamePath) {
+    void toDOT(const std::string& fileNamePath) {
 
         std::ofstream myfile;
         myfile.open(fileNamePath);
@@ -102,7 +131,7 @@ public:
             } else if (op.second->getType() == OP_IMMEDIATE) {
                 myfile << " " << op.first;
                 myfile << " [ label = " << op.second->getLabel();
-                myfile << ", VALUE = " << op.second->getConst();
+                myfile << ", value = " << op.second->getConst();
                 myfile << "]" << std::endl;
                 myfile << " \"" << op.first << "." << op.second->getConst() << "\"[ label = "
                        << op.second->getConst()
@@ -128,25 +157,12 @@ public:
     void toJSON(const std::string &fileNamePath) {
         std::ofstream myfile;
         myfile.open(fileNamePath);
-        myfile << "{\n"
-                  "  \"nodes\": [" << endl;
-        char str_node[] = "    {\n"
-                          "      \"data\": {\n"
-                          "        \"id\": \"%d\",\n"
-                          "        \"type\": \"%s\"\n"
-                          "      },\n"
-                          "      \"group\": \"nodes\",\n"
-                          "      \"classes\": \"%s\"\n"
-                          "    }";
-        char str_edge[] = "    {\n"
-                          "      \"data\": {\n"
-                          "        \"source\": \"%d\",\n"
-                          "        \"target\": \"%d\",\n"
-                          "        \"id\": \"%d\"\n"
-                          "      },\n"
-                          "      \"group\": \"edges\",\n"
-                          "      \"classes\": \"\"\n"
-                          "    }";
+        myfile << "[" << endl;
+        
+        char str_node_sub[] = R"({"data":{"id":"%d","op1":"%d","op2":"%d","type":"sub"},"group":"nodes"})";
+        char str_node[] = R"({"data":{"id":"%d","type":"%s"},"group":"nodes"})";
+        char str_edge[] = R"({"data":{"id":"%d","source":"%d","target":"%d"},"group":"edges"})";
+        
         char buf[256];
         int numOp = DataFlow<T>::getNumOp();
         int numEdge = DataFlow<T>::getNumEdges();
@@ -156,38 +172,35 @@ public:
         for (auto item:DataFlow<T>::op_array) {
             cnt++;
             auto op = item.second;
-            sprintf(buf, str_node, op->getId(), op->getLabel().c_str(), op->getLabel().c_str());
+            if(op->getLabel() == "sub"){
+                 sprintf(buf, str_node_sub, op->getId(),op->getSrcA(),op->getSrcB(), op->getLabel().c_str());
+            }else{
+                sprintf(buf, str_node, op->getId(), op->getLabel().c_str()); 
+            }
             if (op->getId() > max_id) {
                 max_id = op->getId();
             }
-            if (cnt < numOp)
-                myfile << buf << "," << endl;
-            else
-                myfile << buf << endl;
+            myfile << buf << "," << endl;
         }
-        myfile << "  ],\n"
-                  "  \"edges\": [" << endl;
         id_edges = max_id + 1;
         cnt = 0;
         for (auto item:DataFlow<T>::op_array) {
             auto op = item.second;
-            for (auto edge:op->getDst()) {
+            for (auto neighbor:op->getDst()) {
                 cnt++;
-                sprintf(buf, str_edge, op->getId(), edge->getId(), id_edges++);
-                myfile << buf << "," << endl;
+                sprintf(buf, str_edge, id_edges++, op->getId(), neighbor->getId());
                 if (cnt < numEdge)
                     myfile << buf << "," << endl;
                 else
                     myfile << buf << endl;
             }
         }
-        myfile << "  ]\n"
-                  "}";
+        myfile << "]";
         myfile.close();
     }
 
-    void loadFromJSON(std::string fileNamePath) {
-
+    void loadFromJSON(const std::string& fileNamePath) {
+        //TODO: Not Implemented!
     }
 
     void connect(Operator<T> *src, Operator<T> *dst, PORT dstPort) {
@@ -252,8 +265,8 @@ public:
         return id;
     }
 
-    void setId(int id) {
-        DataFlow<T>::id = id;
+    void setId(int df_id) {
+        DataFlow<T>::id = df_id;
     }
 
     int getMaxLevel() const {
